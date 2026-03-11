@@ -15,21 +15,61 @@ text-align:center;
 padding:20px;
 }
 
+h1{
+margin-bottom:10px;
+}
+
 .player{
 background:#1e293b;
-padding:10px;
-margin:5px;
+padding:12px;
+margin:6px;
 border-radius:8px;
 }
 
+.roleBox{
+background:#111827;
+padding:15px;
+margin:10px;
+border-radius:10px;
+}
+
+.blue{
+border-left:6px solid #3b82f6;
+}
+
+.red{
+border-left:6px solid #ef4444;
+}
+
 button{
-padding:12px 20px;
-font-size:18px;
+
+padding:15px 30px;
+font-size:20px;
 border:none;
 border-radius:10px;
-margin-top:15px;
+cursor:pointer;
 background:#22c55e;
 color:white;
+transition:0.3s;
+
+}
+
+button:hover{
+transform:scale(1.1);
+}
+
+.startAnim{
+
+animation:startEffect 0.5s;
+
+}
+
+@keyframes startEffect{
+
+0%{transform:scale(1)}
+50%{transform:scale(1.3)}
+100%{transform:scale(1)}
+
 }
 
 </style>
@@ -44,11 +84,13 @@ color:white;
 
 <div id="players"></div>
 
-<button onclick="start()">Bắt đầu</button>
+<br>
+
+<button id="startBtn" onclick="start()">BẮT ĐẦU</button>
 
 <br><br>
 
-<a href="/qr" target="_blank">📱 Hiện QR code</a>
+<div id="roles"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 
@@ -78,9 +120,44 @@ div.appendChild(d)
 
 function start(){
 
+const btn=document.getElementById("startBtn")
+
+btn.classList.add("startAnim")
+
+setTimeout(()=>{
+btn.classList.remove("startAnim")
+},500)
+
 socket.emit("start")
 
 }
+
+socket.on("showRoles",(players)=>{
+
+const div=document.getElementById("roles")
+
+div.innerHTML="<h2>🎭 Vai trò người chơi</h2>"
+
+players.forEach(p=>{
+
+const box=document.createElement("div")
+
+let color=""
+
+if(p.role.includes("Đỏ") || p.role.includes("Bom"))
+color="red"
+else
+color="blue"
+
+box.className="roleBox "+color
+
+box.innerHTML="<b>"+p.name+"</b><br>"+p.role
+
+div.appendChild(box)
+
+})
+
+})
 
 </script>
 
