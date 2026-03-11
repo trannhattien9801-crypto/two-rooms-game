@@ -63,9 +63,13 @@ roles=roles.sort(()=>Math.random()-0.5)
 
 players.forEach((p,i)=>{
 
+p.role = roles[i]
+
 io.to(p.id).emit("role",roles[i])
 
 })
+
+io.emit("showRoles",players)
 
 })
 
