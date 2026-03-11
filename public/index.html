@@ -2,43 +2,66 @@
 <html>
 
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Two Rooms</title>
 
 <style>
 
 body{
- font-family: Arial;
- text-align:center;
- background:#111;
- color:white;
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
 }
 
 .card{
- background:#222;
- padding:30px;
- border-radius:10px;
- margin-top:80px;
+background:#1e293b;
+padding:30px;
+border-radius:15px;
+max-width:400px;
+margin:auto;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
 input{
- padding:10px;
- font-size:18px;
- width:200px;
+padding:12px;
+font-size:16px;
+border-radius:8px;
+border:none;
+width:80%;
+margin-top:10px;
 }
 
 button{
- padding:10px 20px;
- font-size:18px;
- margin-top:10px;
- background:#00c853;
- border:none;
- color:white;
- border-radius:5px;
+padding:12px 20px;
+font-size:18px;
+border:none;
+border-radius:10px;
+margin-top:15px;
+cursor:pointer;
+background:#3b82f6;
+color:white;
 }
 
-#role{
- font-size:30px;
- margin-top:40px;
+.role{
+margin-top:30px;
+font-size:28px;
+font-weight:bold;
+}
+
+.blue{
+color:#38bdf8;
+}
+
+.red{
+color:#ef4444;
+}
+
+.special{
+color:#facc15;
 }
 
 </style>
@@ -49,15 +72,19 @@ button{
 
 <div class="card">
 
-<h2>Join Game</h2>
+<h1>🎮 Two Rooms</h1>
 
-<input id="name" placeholder="Your Name">
+<p>Nhập tên của bạn</p>
 
-<br><br>
+<input id="name" placeholder="Tên người chơi">
 
-<button onclick="join()">Join</button>
+<br>
 
-<h2 id="role"></h2>
+<button onclick="join()">Tham gia</button>
+
+<div id="status"></div>
+
+<div id="role" class="role"></div>
 
 </div>
 
@@ -69,15 +96,37 @@ const socket = io()
 
 function join(){
 
- const name = document.getElementById("name").value
- socket.emit("join",name)
+const name=document.getElementById("name").value
+
+socket.emit("join",name)
+
+document.getElementById("status").innerHTML="Đang chờ host bắt đầu..."
 
 }
 
 socket.on("role",(role)=>{
 
- document.getElementById("role").innerText =
- "Your Role: "+role
+const roleDiv=document.getElementById("role")
+
+if(role==="Blue"){
+roleDiv.className="role blue"
+roleDiv.innerHTML="🔵 Team Xanh"
+}
+
+else if(role==="Red"){
+roleDiv.className="role red"
+roleDiv.innerHTML="🔴 Team Đỏ"
+}
+
+else if(role==="President"){
+roleDiv.className="role special"
+roleDiv.innerHTML="👑 Tổng Thống"
+}
+
+else if(role==="Bomber"){
+roleDiv.className="role special"
+roleDiv.innerHTML="💣 Bomber"
+}
 
 })
 

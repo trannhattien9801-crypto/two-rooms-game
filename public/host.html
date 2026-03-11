@@ -3,34 +3,44 @@
 
 <head>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Host</title>
+
 <style>
 
 body{
- font-family:Arial;
- text-align:center;
- background:#121212;
- color:white;
+font-family:Arial;
+background:#020617;
+color:white;
+text-align:center;
+padding:20px;
 }
 
-ul{
- list-style:none;
- padding:0;
+.panel{
+background:#1e293b;
+padding:30px;
+border-radius:15px;
+max-width:500px;
+margin:auto;
 }
 
-li{
- background:#222;
- margin:5px;
- padding:10px;
- border-radius:5px;
+.player{
+background:#334155;
+padding:10px;
+margin:5px;
+border-radius:8px;
 }
 
 button{
- padding:15px 30px;
- font-size:20px;
- background:#ff1744;
- border:none;
- color:white;
- border-radius:8px;
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#22c55e;
+color:white;
+margin-top:20px;
 }
 
 </style>
@@ -39,37 +49,48 @@ button{
 
 <body>
 
-<h1>Host Panel</h1>
+<div class="panel">
 
-<a href="/qr" target="_blank">Show QR Code</a>
+<h1>🎮 Host Game</h1>
 
-<h2>Players</h2>
+<h2>Danh sách người chơi</h2>
 
-<ul id="players"></ul>
+<div id="players"></div>
 
-<button onclick="start()">START GAME</button>
+<button onclick="start()">Bắt đầu game</button>
+
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-const socket = io()
+const socket=io()
 
 socket.on("players",(players)=>{
 
- const ul = document.getElementById("players")
- ul.innerHTML=""
+const div=document.getElementById("players")
 
- players.forEach(p=>{
-  const li = document.createElement("li")
-  li.innerText=p.name
-  ul.appendChild(li)
- })
+div.innerHTML=""
+
+players.forEach(p=>{
+
+const d=document.createElement("div")
+
+d.className="player"
+
+d.innerText=p.name
+
+div.appendChild(d)
+
+})
 
 })
 
 function start(){
- socket.emit("start")
+
+socket.emit("start")
+
 }
 
 </script>
