@@ -2,6 +2,7 @@ const express = require("express")
 const http = require("http")
 const { Server } = require("socket.io")
 const path = require("path")
+const QRCode = require("qrcode")
 
 const app = express()
 const server = http.createServer(app)
@@ -26,38 +27,27 @@ io.emit("players",players)
 
 socket.on("start",()=>{
 
-let specialRoles=[
-
+let roles=[
 "Tổng Thống",
 "Kẻ Đặt Bom",
-
 "Bác Sĩ",
 "Kỹ Sư",
 "Vệ Sĩ",
 "Thám Tử",
 "Phóng Viên",
 "Luật Sư",
-"Chỉ Huy",
-"Nhà Ngoại Giao",
-"Người Gác Cửa",
-
 "Gián Điệp",
 "Sát Thủ",
 "Bắn Tỉa",
 "Kẻ Lừa Đảo",
 "Kẻ Phá Hoại",
-
 "Con Bạc",
 "Nhà Đàm Phán",
 "Nhà Tiên Tri",
 "Bản Sao",
-
 "Người Câm Xanh",
 "Người Câm Đỏ"
-
 ]
-
-let roles=[...specialRoles]
 
 while(roles.length < players.length){
 
@@ -69,7 +59,7 @@ roles.push("Đội Đỏ")
 
 }
 
-roles = roles.sort(()=>Math.random()-0.5)
+roles=roles.sort(()=>Math.random()-0.5)
 
 players.forEach((p,i)=>{
 
@@ -81,7 +71,7 @@ io.to(p.id).emit("role",roles[i])
 
 socket.on("disconnect",()=>{
 
-players = players.filter(p=>p.id!==socket.id)
+players=players.filter(p=>p.id!==socket.id)
 
 io.emit("players",players)
 
@@ -89,8 +79,18 @@ io.emit("players",players)
 
 })
 
+app.get("/qr", async (req,res)=>{
+
+const url=req.protocol+"://"+req.get("host")
+
+const qr=await QRCode.toDataURL(url)
+
+res.send(`<h2>Quét để vào game</h2><img src="${qr}">`)
+
+})
+
 const PORT = process.env.PORT || 3000
 
 server.listen(PORT,()=>{
 console.log("Server running")
-})
+})  

@@ -5,8 +5,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Host</title>
-
 <style>
 
 body{
@@ -17,30 +15,21 @@ text-align:center;
 padding:20px;
 }
 
-.panel{
-background:#1e293b;
-padding:30px;
-border-radius:15px;
-max-width:500px;
-margin:auto;
-}
-
 .player{
-background:#334155;
+background:#1e293b;
 padding:10px;
 margin:5px;
 border-radius:8px;
 }
 
 button{
-padding:15px 25px;
+padding:12px 20px;
 font-size:18px;
 border:none;
 border-radius:10px;
-cursor:pointer;
+margin-top:15px;
 background:#22c55e;
 color:white;
-margin-top:20px;
 }
 
 </style>
@@ -49,17 +38,17 @@ margin-top:20px;
 
 <body>
 
-<div class="panel">
-
 <h1>🎮 Host Game</h1>
 
 <h2>Danh sách người chơi</h2>
 
 <div id="players"></div>
 
-<button onclick="start()">Bắt đầu game</button>
+<button onclick="start()">Bắt đầu</button>
 
-</div>
+<br><br>
+
+<a href="/qr" target="_blank">📱 Hiện QR code</a>
 
 <script src="/socket.io/socket.io.js"></script>
 
