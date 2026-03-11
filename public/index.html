@@ -4,7 +4,6 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Two Rooms</title>
 
 <style>
@@ -17,12 +16,15 @@ text-align:center;
 padding:20px;
 }
 
+.container{
+max-width:420px;
+margin:auto;
+}
+
 .card{
 background:#1e293b;
-padding:30px;
+padding:25px;
 border-radius:15px;
-max-width:400px;
-margin:auto;
 box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
@@ -32,7 +34,6 @@ font-size:16px;
 border-radius:8px;
 border:none;
 width:80%;
-margin-top:10px;
 }
 
 button{
@@ -46,22 +47,38 @@ background:#3b82f6;
 color:white;
 }
 
-.role{
-margin-top:30px;
-font-size:28px;
+.roleCard{
+display:none;
+margin-top:20px;
+padding:25px;
+border-radius:15px;
+}
+
+.team{
+font-size:26px;
 font-weight:bold;
 }
 
+.role{
+font-size:22px;
+margin-top:10px;
+}
+
+.desc{
+margin-top:10px;
+font-size:16px;
+}
+
 .blue{
-color:#38bdf8;
+background:#1e3a8a;
 }
 
 .red{
-color:#ef4444;
+background:#7f1d1d;
 }
 
 .special{
-color:#facc15;
+background:#78350f;
 }
 
 </style>
@@ -70,9 +87,11 @@ color:#facc15;
 
 <body>
 
-<div class="card">
+<div class="container">
 
-<h1>🎮 Two Rooms</h1>
+<div id="joinCard" class="card">
+
+<h2>🎮 Two Rooms</h2>
 
 <p>Nhập tên của bạn</p>
 
@@ -82,9 +101,17 @@ color:#facc15;
 
 <button onclick="join()">Tham gia</button>
 
-<div id="status"></div>
+<p id="status"></p>
 
-<div id="role" class="role"></div>
+</div>
+
+<div id="roleCard" class="roleCard">
+
+<div class="team" id="team"></div>
+<div class="role" id="role"></div>
+<div class="desc" id="desc"></div>
+
+</div>
 
 </div>
 
@@ -100,33 +127,65 @@ const name=document.getElementById("name").value
 
 socket.emit("join",name)
 
-document.getElementById("status").innerHTML="Đang chờ host bắt đầu..."
+document.getElementById("status").innerText="Đang chờ host bắt đầu..."
 
 }
 
 socket.on("role",(role)=>{
 
-const roleDiv=document.getElementById("role")
+document.getElementById("joinCard").style.display="none"
 
-if(role==="Blue"){
-roleDiv.className="role blue"
-roleDiv.innerHTML="🔵 Team Xanh"
+const roleCard=document.getElementById("roleCard")
+roleCard.style.display="block"
+
+let team=""
+let desc=""
+
+if(role==="Đội Xanh"){
+roleCard.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn thuộc phe Xanh."
 }
 
-else if(role==="Red"){
-roleDiv.className="role red"
-roleDiv.innerHTML="🔴 Team Đỏ"
+else if(role==="Đội Đỏ"){
+roleCard.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn thuộc phe Đỏ."
 }
 
-else if(role==="President"){
-roleDiv.className="role special"
-roleDiv.innerHTML="👑 Tổng Thống"
+else if(role==="Tổng Thống"){
+roleCard.className="roleCard special"
+team="👑 ĐỘI XANH"
+desc="Nếu Bomber chạm bạn thì phe Đỏ thắng."
 }
 
-else if(role==="Bomber"){
-roleDiv.className="role special"
-roleDiv.innerHTML="💣 Bomber"
+else if(role==="Kẻ Đặt Bom"){
+roleCard.className="roleCard special"
+team="💣 ĐỘI ĐỎ"
+desc="Nếu bạn chạm Tổng Thống thì phe Đỏ thắng."
 }
+
+else if(role==="Người Câm Xanh"){
+roleCard.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn không được nói trong suốt trò chơi."
+}
+
+else if(role==="Người Câm Đỏ"){
+roleCard.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn không được nói trong suốt trò chơi."
+}
+
+else{
+roleCard.className="roleCard special"
+team="🎭 VAI ĐẶC BIỆT"
+desc="Bạn có vai trò đặc biệt trong trò chơi."
+}
+
+document.getElementById("team").innerText=team
+document.getElementById("role").innerText="Vai trò: "+role
+document.getElementById("desc").innerText=desc
 
 })
 
