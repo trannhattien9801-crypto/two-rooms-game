@@ -34,10 +34,11 @@ font-size:16px;
 border-radius:8px;
 border:none;
 width:80%;
+margin-top:10px;
 }
 
 button{
-padding:12px 20px;
+padding:14px 24px;
 font-size:18px;
 border:none;
 border-radius:10px;
@@ -45,37 +46,73 @@ margin-top:15px;
 cursor:pointer;
 background:#3b82f6;
 color:white;
+transition:0.2s;
 }
 
-.roleCard{
+button:hover{
+transform:scale(1.08);
+background:#2563eb;
+}
+
+.joinAnim{
+animation:joinEffect 0.4s;
+background:#22c55e !important;
+}
+
+@keyframes joinEffect{
+0%{transform:scale(1)}
+50%{transform:scale(1.3)}
+100%{transform:scale(1)}
+}
+
+.lobby{
+display:none;
+margin-top:25px;
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+}
+
+.player{
+background:#0f172a;
+padding:10px;
+margin:5px;
+border-radius:8px;
+}
+
+.cardContainer{
 display:none;
 margin-top:30px;
-padding:30px;
+perspective:1000px;
+}
+
+.card{
+width:100%;
+height:220px;
+position:relative;
+transform-style:preserve-3d;
+transition:transform 0.7s;
+}
+
+.card.flip{
+transform:rotateY(180deg);
+}
+
+.cardFace{
+position:absolute;
+width:100%;
+height:100%;
+backface-visibility:hidden;
 border-radius:20px;
-box-shadow:0 15px 40px rgba(0,0,0,0.7);
-animation:fade 0.5s;
+padding:25px;
 }
 
-@keyframes fade{
-from{opacity:0;transform:scale(0.9)}
-to{opacity:1;transform:scale(1)}
+.cardFront{
+background:#1e293b;
 }
 
-.team{
-font-size:28px;
-font-weight:bold;
-margin-bottom:10px;
-}
-
-.role{
-font-size:26px;
-margin-top:5px;
-}
-
-.desc{
-margin-top:15px;
-font-size:16px;
-line-height:1.4;
+.cardBack{
+transform:rotateY(180deg);
 }
 
 .blue{
@@ -88,6 +125,20 @@ background:linear-gradient(135deg,#991b1b,#ef4444);
 
 .special{
 background:linear-gradient(135deg,#92400e,#facc15);
+}
+
+.team{
+font-size:26px;
+font-weight:bold;
+}
+
+.role{
+font-size:24px;
+margin-top:10px;
+}
+
+.desc{
+margin-top:10px;
 }
 
 </style>
@@ -108,17 +159,40 @@ background:linear-gradient(135deg,#92400e,#facc15);
 
 <br>
 
-<button onclick="join()">Tham gia</button>
-
-<p id="status"></p>
+<button id="joinBtn" onclick="join()">Tham gia</button>
 
 </div>
 
-<div id="roleCard" class="roleCard">
+<div id="lobby" class="lobby">
 
-<div id="team" class="team"></div>
-<div id="role" class="role"></div>
-<div id="desc" class="desc"></div>
+<h3>👥 Lobby</h3>
+
+<p>Đang chờ host bắt đầu...</p>
+
+<div id="players"></div>
+
+</div>
+
+<div class="cardContainer" id="cardContainer">
+
+<div class="card" id="card">
+
+<div class="cardFace cardFront">
+
+<h2>🎴 Vai trò</h2>
+<p>Đang lật...</p>
+
+</div>
+
+<div class="cardFace cardBack" id="cardBack">
+
+<div class="team" id="team"></div>
+<div class="role" id="role"></div>
+<div class="desc" id="desc"></div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -134,155 +208,104 @@ function join(){
 
 const name=document.getElementById("name").value
 
+if(name.trim()==""){
+alert("Nhập tên trước")
+return
+}
+
+const btn=document.getElementById("joinBtn")
+
+btn.classList.add("joinAnim")
+btn.innerText="Đang tham gia..."
+
 socket.emit("join",name)
 
-document.getElementById("status").innerText="Đang chờ host bắt đầu..."
+document.getElementById("joinCard").style.display="none"
+document.getElementById("lobby").style.display="block"
 
 }
+
+socket.on("players",(players)=>{
+
+const div=document.getElementById("players")
+
+div.innerHTML=""
+
+players.forEach(p=>{
+
+const d=document.createElement("div")
+
+d.className="player"
+d.innerText=p.name
+
+div.appendChild(d)
+
+})
+
+})
 
 socket.on("role",(role)=>{
 
-document.getElementById("joinCard").style.display="none"
+document.getElementById("lobby").style.display="none"
+document.getElementById("cardContainer").style.display="block"
 
-const card=document.getElementById("roleCard")
-card.style.display="block"
+const card=document.getElementById("card")
+const back=document.getElementById("cardBack")
 
 let team=""
 let desc=""
+let color=""
 
 if(role==="Đội Xanh"){
-card.className="roleCard blue"
 team="🔵 ĐỘI XANH"
-desc="Bạn là dân thường đội Xanh."
+desc="Bạn là dân thường đội xanh"
+color="blue"
 }
 
 else if(role==="Đội Đỏ"){
-card.className="roleCard red"
 team="🔴 ĐỘI ĐỎ"
-desc="Bạn là dân thường đội Đỏ."
+desc="Bạn là dân thường đội đỏ"
+color="red"
 }
 
 else if(role==="Tổng Thống"){
-card.className="roleCard special"
 team="👑 ĐỘI XANH"
-desc="Nếu Bomber chạm bạn thì phe Đỏ thắng."
+desc="Bomber chạm bạn → đội đỏ thắng"
+color="special"
 }
 
 else if(role==="Kẻ Đặt Bom"){
-card.className="roleCard special"
 team="💣 ĐỘI ĐỎ"
-desc="Nếu bạn chạm Tổng Thống thì phe Đỏ thắng."
-}
-
-else if(role==="Bác Sĩ"){
-card.className="roleCard blue"
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể bảo vệ người chơi quan trọng."
-}
-
-else if(role==="Kỹ Sư"){
-card.className="roleCard blue"
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể kiểm tra thiết bị."
-}
-
-else if(role==="Vệ Sĩ"){
-card.className="roleCard blue"
-team="🔵 ĐỘI XANH"
-desc="Bạn bảo vệ Tổng Thống."
-}
-
-else if(role==="Thám Tử"){
-card.className="roleCard blue"
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể điều tra người chơi."
-}
-
-else if(role==="Phóng Viên"){
-card.className="roleCard blue"
-team="🔵 ĐỘI XANH"
-desc="Bạn thu thập thông tin."
-}
-
-else if(role==="Luật Sư"){
-card.className="roleCard blue"
-team="🔵 ĐỘI XANH"
-desc="Bạn bảo vệ người bị nghi ngờ."
-}
-
-else if(role==="Gián Điệp"){
-card.className="roleCard red"
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn biết thông tin đội Xanh."
-}
-
-else if(role==="Sát Thủ"){
-card.className="roleCard red"
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn có thể loại người chơi."
-}
-
-else if(role==="Bắn Tỉa"){
-card.className="roleCard red"
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn có thể hạ mục tiêu."
-}
-
-else if(role==="Kẻ Lừa Đảo"){
-card.className="roleCard red"
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn gây nhiễu thông tin."
-}
-
-else if(role==="Kẻ Phá Hoại"){
-card.className="roleCard red"
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn phá kế hoạch của đội Xanh."
-}
-
-else if(role==="Con Bạc"){
-card.className="roleCard special"
-team="🎲 TRUNG LẬP"
-desc="Bạn thắng nếu đoán đúng đội thắng."
-}
-
-else if(role==="Nhà Đàm Phán"){
-card.className="roleCard special"
-team="🤝 TRUNG LẬP"
-desc="Bạn có thể trao đổi người giữa hai phòng."
-}
-
-else if(role==="Nhà Tiên Tri"){
-card.className="roleCard special"
-team="🔮 TRUNG LẬP"
-desc="Bạn có thể nhìn trước thông tin."
-}
-
-else if(role==="Bản Sao"){
-card.className="roleCard special"
-team="🧬 TRUNG LẬP"
-desc="Bạn sao chép vai trò người khác."
+desc="Chạm Tổng Thống để thắng"
+color="special"
 }
 
 else if(role==="Người Câm Xanh"){
-card.className="roleCard blue"
 team="🤐 ĐỘI XANH"
-desc="Bạn không được phép nói."
+desc="Bạn không được nói"
+color="blue"
 }
 
 else if(role==="Người Câm Đỏ"){
-card.className="roleCard red"
 team="🤐 ĐỘI ĐỎ"
-desc="Bạn không được phép nói."
+desc="Bạn không được nói"
+color="red"
 }
+
+back.className="cardFace cardBack "+color
 
 document.getElementById("team").innerText=team
 document.getElementById("role").innerText=role
 document.getElementById("desc").innerText=desc
+
+setTimeout(()=>{
+card.classList.add("flip")
+},500)
 
 })
 
 </script>
 
 </body>
+
 </html>
