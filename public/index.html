@@ -145,7 +145,6 @@ socket.on("role",(role)=>{
 document.getElementById("joinCard").style.display="none"
 
 const card=document.getElementById("roleCard")
-
 card.style.display="block"
 
 let team=""
@@ -175,24 +174,106 @@ team="💣 ĐỘI ĐỎ"
 desc="Nếu bạn chạm Tổng Thống thì phe Đỏ thắng."
 }
 
+else if(role==="Bác Sĩ"){
+card.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể bảo vệ người chơi quan trọng."
+}
+
+else if(role==="Kỹ Sư"){
+card.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể kiểm tra thiết bị."
+}
+
+else if(role==="Vệ Sĩ"){
+card.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn bảo vệ Tổng Thống."
+}
+
+else if(role==="Thám Tử"){
+card.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể điều tra người chơi."
+}
+
+else if(role==="Phóng Viên"){
+card.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn thu thập thông tin."
+}
+
+else if(role==="Luật Sư"){
+card.className="roleCard blue"
+team="🔵 ĐỘI XANH"
+desc="Bạn bảo vệ người bị nghi ngờ."
+}
+
+else if(role==="Gián Điệp"){
+card.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn biết thông tin đội Xanh."
+}
+
+else if(role==="Sát Thủ"){
+card.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn có thể loại người chơi."
+}
+
+else if(role==="Bắn Tỉa"){
+card.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn có thể hạ mục tiêu."
+}
+
+else if(role==="Kẻ Lừa Đảo"){
+card.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn gây nhiễu thông tin."
+}
+
+else if(role==="Kẻ Phá Hoại"){
+card.className="roleCard red"
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn phá kế hoạch của đội Xanh."
+}
+
+else if(role==="Con Bạc"){
+card.className="roleCard special"
+team="🎲 TRUNG LẬP"
+desc="Bạn thắng nếu đoán đúng đội thắng."
+}
+
+else if(role==="Nhà Đàm Phán"){
+card.className="roleCard special"
+team="🤝 TRUNG LẬP"
+desc="Bạn có thể trao đổi người giữa hai phòng."
+}
+
+else if(role==="Nhà Tiên Tri"){
+card.className="roleCard special"
+team="🔮 TRUNG LẬP"
+desc="Bạn có thể nhìn trước thông tin."
+}
+
+else if(role==="Bản Sao"){
+card.className="roleCard special"
+team="🧬 TRUNG LẬP"
+desc="Bạn sao chép vai trò người khác."
+}
+
 else if(role==="Người Câm Xanh"){
 card.className="roleCard blue"
 team="🤐 ĐỘI XANH"
-desc="Bạn không được phép nói trong trò chơi."
+desc="Bạn không được phép nói."
 }
 
 else if(role==="Người Câm Đỏ"){
 card.className="roleCard red"
 team="🤐 ĐỘI ĐỎ"
-desc="Bạn không được phép nói trong trò chơi."
-}
-
-else{
-
-card.className="roleCard special"
-team="🎭 VAI ĐẶC BIỆT"
-desc="Bạn có khả năng đặc biệt."
-
+desc="Bạn không được phép nói."
 }
 
 document.getElementById("team").innerText=team
