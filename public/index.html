@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+ font-family: Arial;
+ text-align:center;
+ background:#111;
+ color:white;
+}
+
+.card{
+ background:#222;
+ padding:30px;
+ border-radius:10px;
+ margin-top:80px;
+}
+
+input{
+ padding:10px;
+ font-size:18px;
+ width:200px;
+}
+
+button{
+ padding:10px 20px;
+ font-size:18px;
+ margin-top:10px;
+ background:#00c853;
+ border:none;
+ color:white;
+ border-radius:5px;
+}
+
+#role{
+ font-size:30px;
+ margin-top:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Join Game</h2>
+
+<input id="name" placeholder="Your Name">
+
+<br><br>
+
+<button onclick="join()">Join</button>
+
+<h2 id="role"></h2>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io()
+
+function join(){
+
+ const name = document.getElementById("name").value
+ socket.emit("join",name)
+
+}
+
+socket.on("role",(role)=>{
+
+ document.getElementById("role").innerText =
+ "Your Role: "+role
+
+})
+
+</script>
+
+</body>
+</html>

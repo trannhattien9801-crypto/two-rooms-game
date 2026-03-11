@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<style>
+
+body{
+ font-family:Arial;
+ text-align:center;
+ background:#121212;
+ color:white;
+}
+
+ul{
+ list-style:none;
+ padding:0;
+}
+
+li{
+ background:#222;
+ margin:5px;
+ padding:10px;
+ border-radius:5px;
+}
+
+button{
+ padding:15px 30px;
+ font-size:20px;
+ background:#ff1744;
+ border:none;
+ color:white;
+ border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Host Panel</h1>
+
+<a href="/qr" target="_blank">Show QR Code</a>
+
+<h2>Players</h2>
+
+<ul id="players"></ul>
+
+<button onclick="start()">START GAME</button>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io()
+
+socket.on("players",(players)=>{
+
+ const ul = document.getElementById("players")
+ ul.innerHTML=""
+
+ players.forEach(p=>{
+  const li = document.createElement("li")
+  li.innerText=p.name
+  ul.appendChild(li)
+ })
+
+})
+
+function start(){
+ socket.emit("start")
+}
+
+</script>
+
+</body>
+</html>
