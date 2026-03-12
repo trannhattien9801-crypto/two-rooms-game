@@ -10,7 +10,7 @@ app.use(express.static("public"))
 
 let players = []
 
-// danh sách vai trò (đã bỏ người đàm phán)
+// danh sách vai trò
 const roles = [
 "tongthong",
 "boom",
@@ -25,7 +25,7 @@ const roles = [
 "bantia",
 "keluadao",
 "kephahoai",
-"nhatien tri",
+"nhatientri",
 "bansao",
 "conbac",
 "nguoicam",
@@ -33,11 +33,13 @@ const roles = [
 "doixanh"
 ]
 
-io.on("connection", (socket)=>{
+io.on("connection",(socket)=>{
 
-console.log("player connected")
+console.log("Player connected")
 
-socket.on("join", (name)=>{
+// người chơi tham gia
+socket.on("join",(name)=>{
+
 players.push({
 id:socket.id,
 name:name,
@@ -45,29 +47,41 @@ role:null
 })
 
 io.emit("updatePlayers",players)
+
 })
 
-socket.on("startGame",()=>{
+// host bắt đầu game
+socket.on("startGame",(count)=>{
 
-let shuffled = [...roles].sort(()=>Math.random()-0.5)
+// trộn vai
+let shuffled=[...roles].sort(()=>Math.random()-0.5)
 
+// chia vai cho người chơi
 players.forEach((p,i)=>{
+
 p.role = shuffled[i] || "doixanh"
 
+// gửi role cho player
 io.to(p.id).emit("yourRole",p.role)
+
 })
 
+// gửi danh sách role cho host
 io.emit("gameStarted",players)
 
 })
 
+// khi người chơi rời
 socket.on("disconnect",()=>{
+
 players = players.filter(p=>p.id !== socket.id)
+
 io.emit("updatePlayers",players)
+
 })
 
 })
 
 server.listen(3000,()=>{
-console.log("Server running")
+console.log("Server running on port 3000")
 })
