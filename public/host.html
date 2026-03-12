@@ -5,6 +5,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<title>Host Panel</title>
+
 <style>
 
 body{
@@ -15,43 +17,46 @@ text-align:center;
 padding:20px;
 }
 
-h1{
-margin-bottom:10px;
+.panel{
+background:#1e293b;
+padding:25px;
+border-radius:15px;
+max-width:500px;
+margin:auto;
 }
 
 .player{
-background:#1e293b;
-padding:12px;
-margin:6px;
+background:#0f172a;
+padding:10px;
+margin:5px;
 border-radius:8px;
 }
 
 .roleBox{
 background:#111827;
-padding:15px;
-margin:10px;
-border-radius:10px;
-}
-
-.blue{
-border-left:6px solid #3b82f6;
-}
-
-.red{
-border-left:6px solid #ef4444;
+padding:12px;
+margin:8px;
+border-radius:8px;
 }
 
 button{
 
-padding:15px 30px;
-font-size:20px;
+padding:14px 25px;
+font-size:18px;
 border:none;
 border-radius:10px;
+margin:10px;
 cursor:pointer;
-background:#22c55e;
-color:white;
-transition:0.3s;
+transition:0.2s;
 
+}
+
+.start{
+background:#22c55e;
+}
+
+.reset{
+background:#ef4444;
 }
 
 button:hover{
@@ -59,9 +64,7 @@ transform:scale(1.1);
 }
 
 .startAnim{
-
 animation:startEffect 0.5s;
-
 }
 
 @keyframes startEffect{
@@ -72,23 +75,43 @@ animation:startEffect 0.5s;
 
 }
 
+input{
+
+padding:10px;
+font-size:16px;
+border-radius:8px;
+border:none;
+width:150px;
+
+}
+
 </style>
 
 </head>
 
 <body>
 
-<h1>🎮 Host Game</h1>
+<h1>🎮 Host Control Panel</h1>
 
-<h2>Danh sách người chơi</h2>
+<div class="panel">
+
+<h3>👥 Người chơi</h3>
 
 <div id="players"></div>
 
 <br>
 
-<button id="startBtn" onclick="start()">BẮT ĐẦU</button>
+<input id="playerCount" type="number" placeholder="Số người chơi">
 
 <br><br>
+
+<button id="startBtn" class="start" onclick="start()">BẮT ĐẦU</button>
+
+<button class="reset" onclick="reset()">RESET</button>
+
+</div>
+
+<br>
 
 <div id="roles"></div>
 
@@ -96,7 +119,7 @@ animation:startEffect 0.5s;
 
 <script>
 
-const socket=io()
+const socket = io()
 
 socket.on("players",(players)=>{
 
@@ -128,7 +151,9 @@ setTimeout(()=>{
 btn.classList.remove("startAnim")
 },500)
 
-socket.emit("start")
+const count=document.getElementById("playerCount").value
+
+socket.emit("startGame",count)
 
 }
 
@@ -142,14 +167,7 @@ players.forEach(p=>{
 
 const box=document.createElement("div")
 
-let color=""
-
-if(p.role.includes("Đỏ") || p.role.includes("Bom"))
-color="red"
-else
-color="blue"
-
-box.className="roleBox "+color
+box.className="roleBox"
 
 box.innerHTML="<b>"+p.name+"</b><br>"+p.role
 
@@ -159,7 +177,14 @@ div.appendChild(box)
 
 })
 
+function reset(){
+
+location.reload()
+
+}
+
 </script>
 
 </body>
+
 </html>
