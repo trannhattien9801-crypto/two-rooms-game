@@ -3,16 +3,18 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Host Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Two Rooms</title>
 
 <style>
 
 body{
+margin:0;
 background:#0b0f2a;
 color:white;
 font-family:Arial;
 text-align:center;
-margin:0;
 }
 
 .container{
@@ -20,30 +22,52 @@ padding:30px;
 }
 
 input{
-padding:10px;
+width:80%;
+padding:15px;
 font-size:18px;
 border-radius:10px;
 border:none;
-width:100px;
 }
 
 button{
-padding:12px 25px;
+padding:15px 40px;
 font-size:18px;
 border:none;
-border-radius:10px;
-background:#ff4444;
+border-radius:12px;
+background:#00c3ff;
 color:white;
+margin-top:15px;
 cursor:pointer;
-margin-left:10px;
 }
 
-.player{
-background:#101a45;
-margin:10px auto;
-padding:15px;
-border-radius:12px;
-width:300px;
+.roleCard{
+
+margin-top:40px;
+
+background:linear-gradient(145deg,#101a45,#1e2a70);
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+
+}
+
+.roleCard img{
+width:200px;
+margin-top:20px;
+}
+
+.roleName{
+font-size:32px;
+font-weight:bold;
+}
+
+.roleDesc{
+margin-top:10px;
+font-size:18px;
+opacity:0.9;
 }
 
 </style>
@@ -54,21 +78,19 @@ width:300px;
 
 <div class="container">
 
-<h1>Host Panel</h1>
+<h1>Two Rooms</h1>
 
-<div>
+<div id="join">
 
-Số người chơi
+<input id="name" placeholder="Nhập tên của bạn">
 
-<input id="playerCount" type="number" value="10">
+<br><br>
 
-<button onclick="startGame()">Bắt đầu</button>
+<button onclick="join()">Tham Gia</button>
 
 </div>
 
-<h2>Người chơi</h2>
-
-<div id="players"></div>
+<div id="game"></div>
 
 </div>
 
@@ -78,55 +100,88 @@ Số người chơi
 
 const socket = io()
 
-let currentPlayers=[]
+function join(){
 
-socket.on("updatePlayers",(players)=>{
+let name = document.getElementById("name").value
 
-currentPlayers=players
+if(name===""){
+alert("Nhập tên trước!")
+return
+}
 
-renderPlayers()
+socket.emit("join",name)
 
-})
+document.getElementById("join").innerHTML="Đang chờ host bắt đầu..."
 
-socket.on("gameStarted",(players)=>{
+}
 
-currentPlayers=players
+const roleNames={
 
-renderPlayers()
+tongthong:"Tổng Thống",
+boom:"Bomber",
+bacsi:"Bác Sĩ",
+vesi:"Vệ Sĩ",
+thamtu:"Thám Tử",
+phongvien:"Phóng Viên",
+luatsu:"Luật Sư",
+kysu:"Kỹ Sư",
+giandiep:"Gián Điệp",
+satthu:"Sát Thủ",
+bantia:"Bắn Tỉa",
+keluadao:"Kẻ Lừa Đảo",
+kephahoai:"Kẻ Phá Hoại",
+nhatientri:"Nhà Tiên Tri",
+bansao:"Bản Sao",
+conbac:"Con Bạc",
+camdo:"Câm Đỏ",
+camxanh:"Câm Xanh",
+doido:"Đội Đỏ",
+doixanh:"Đội Xanh"
 
-})
+}
 
-function renderPlayers(){
+const descriptions={
 
-let html=""
+tongthong:"Bạn là mục tiêu của Bomber.",
+boom:"Chạm vào Tổng Thống để đội Đỏ thắng.",
+bacsi:"Bạn có thể bảo vệ người chơi.",
+vesi:"Bảo vệ Tổng Thống.",
+thamtu:"Điều tra người chơi khác.",
+phongvien:"Công bố thông tin.",
+luatsu:"Bảo vệ người bị nghi.",
+kysu:"Kiểm tra thiết bị.",
+giandiep:"Giả làm đội Xanh để thu thập thông tin.",
+satthu:"Loại bỏ mục tiêu.",
+bantia:"Tấn công từ xa.",
+keluadao:"Gây nhiễu thông tin.",
+kephahoai:"Phá kế hoạch đội Xanh.",
+nhatientri:"Biết trước thông tin.",
+bansao:"Sao chép vai trò.",
+conbac:"Đoán đội thắng.",
+camdo:"Bạn thuộc đội Đỏ và không được nói.",
+camxanh:"Bạn thuộc đội Xanh và không được nói.",
+doido:"Bạn thuộc đội Đỏ.",
+doixanh:"Bạn thuộc đội Xanh."
 
-currentPlayers.forEach(p=>{
+}
 
-html+=`
+socket.on("yourRole",(role)=>{
 
-<div class="player">
+document.getElementById("game").innerHTML=`
 
-<div>${p.name}</div>
+<div class="roleCard">
 
-<div>${p.role ? "Vai trò: "+p.role : "Chưa chia vai"}</div>
+<div class="roleName">${roleNames[role]}</div>
+
+<img src="/images/${role}.png">
+
+<div class="roleDesc">${descriptions[role]}</div>
 
 </div>
 
 `
 
 })
-
-document.getElementById("players").innerHTML=html
-
-}
-
-function startGame(){
-
-let count=document.getElementById("playerCount").value
-
-socket.emit("startGame",count)
-
-}
 
 </script>
 

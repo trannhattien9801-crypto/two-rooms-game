@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
 <meta charset="UTF-8">
@@ -21,11 +20,11 @@ padding:30px;
 }
 
 input{
-padding:12px;
+padding:10px;
 font-size:18px;
 border-radius:10px;
 border:none;
-width:150px;
+width:100px;
 }
 
 button{
@@ -40,19 +39,11 @@ margin-left:10px;
 }
 
 .player{
-
 background:#101a45;
 margin:10px auto;
 padding:15px;
 border-radius:12px;
 width:300px;
-
-}
-
-.role{
-margin-top:5px;
-font-size:16px;
-opacity:0.8;
 }
 
 </style>
@@ -69,13 +60,13 @@ opacity:0.8;
 
 Số người chơi
 
-<input id="playerCount" type="number" min="2" max="30" value="10">
+<input id="playerCount" type="number" value="10">
 
 <button onclick="startGame()">Bắt đầu</button>
 
 </div>
 
-<h2>Danh sách người chơi</h2>
+<h2>Người chơi</h2>
 
 <div id="players"></div>
 
@@ -87,11 +78,11 @@ Số người chơi
 
 const socket = io()
 
-let currentPlayers = []
+let currentPlayers=[]
 
 socket.on("updatePlayers",(players)=>{
 
-currentPlayers = players
+currentPlayers=players
 
 renderPlayers()
 
@@ -99,7 +90,7 @@ renderPlayers()
 
 socket.on("gameStarted",(players)=>{
 
-currentPlayers = players
+currentPlayers=players
 
 renderPlayers()
 
@@ -117,11 +108,7 @@ html+=`
 
 <div>${p.name}</div>
 
-<div class="role">
-
-${p.role ? "Vai trò: "+p.role : "Chưa chia vai"}
-
-</div>
+<div>${p.role ? "Vai trò: "+p.role : "Chưa chia vai"}</div>
 
 </div>
 
@@ -129,13 +116,13 @@ ${p.role ? "Vai trò: "+p.role : "Chưa chia vai"}
 
 })
 
-document.getElementById("players").innerHTML = html
+document.getElementById("players").innerHTML=html
 
 }
 
 function startGame(){
 
-let count = document.getElementById("playerCount").value
+let count=document.getElementById("playerCount").value
 
 socket.emit("startGame",count)
 
@@ -144,5 +131,4 @@ socket.emit("startGame",count)
 </script>
 
 </body>
-
-</html> 
+</html>
