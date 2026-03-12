@@ -80,39 +80,18 @@ margin:5px;
 border-radius:8px;
 }
 
-.cardContainer{
+.card{
 display:none;
 margin-top:30px;
-perspective:1000px;
-}
-
-.card{
-width:100%;
-height:220px;
-position:relative;
-transform-style:preserve-3d;
-transition:transform 0.7s;
-}
-
-.card.flip{
-transform:rotateY(180deg);
-}
-
-.cardFace{
-position:absolute;
-width:100%;
-height:100%;
-backface-visibility:hidden;
+padding:30px;
 border-radius:20px;
-padding:25px;
+box-shadow:0 15px 40px rgba(0,0,0,0.6);
+animation:fade 0.5s;
 }
 
-.cardFront{
-background:#1e293b;
-}
-
-.cardBack{
-transform:rotateY(180deg);
+@keyframes fade{
+from{opacity:0;transform:scale(0.9)}
+to{opacity:1;transform:scale(1)}
 }
 
 .blue{
@@ -133,12 +112,13 @@ font-weight:bold;
 }
 
 .role{
-font-size:24px;
+font-size:28px;
 margin-top:10px;
 }
 
 .desc{
-margin-top:10px;
+margin-top:15px;
+font-size:16px;
 }
 
 </style>
@@ -173,26 +153,11 @@ margin-top:10px;
 
 </div>
 
-<div class="cardContainer" id="cardContainer">
-
-<div class="card" id="card">
-
-<div class="cardFace cardFront">
-
-<h2>🎴 Vai trò</h2>
-<p>Đang lật...</p>
-
-</div>
-
-<div class="cardFace cardBack" id="cardBack">
+<div id="roleCard" class="card">
 
 <div class="team" id="team"></div>
 <div class="role" id="role"></div>
 <div class="desc" id="desc"></div>
-
-</div>
-
-</div>
 
 </div>
 
@@ -247,60 +212,188 @@ div.appendChild(d)
 socket.on("role",(role)=>{
 
 document.getElementById("lobby").style.display="none"
-document.getElementById("cardContainer").style.display="block"
 
-const card=document.getElementById("card")
-const back=document.getElementById("cardBack")
+const card=document.getElementById("roleCard")
+
+card.style.display="block"
 
 let team=""
 let desc=""
 let color=""
 
 if(role==="Đội Xanh"){
+
 team="🔵 ĐỘI XANH"
-desc="Bạn là dân thường đội xanh"
+desc="Bạn là dân thường đội xanh."
 color="blue"
+
 }
 
 else if(role==="Đội Đỏ"){
+
 team="🔴 ĐỘI ĐỎ"
-desc="Bạn là dân thường đội đỏ"
+desc="Bạn là dân thường đội đỏ."
 color="red"
+
 }
 
 else if(role==="Tổng Thống"){
+
 team="👑 ĐỘI XANH"
-desc="Bomber chạm bạn → đội đỏ thắng"
+desc="Nếu Bomber chạm bạn thì đội đỏ thắng."
 color="special"
+
 }
 
 else if(role==="Kẻ Đặt Bom"){
+
 team="💣 ĐỘI ĐỎ"
-desc="Chạm Tổng Thống để thắng"
+desc="Chạm Tổng Thống để giúp đội đỏ thắng."
 color="special"
+
+}
+
+else if(role==="Bác Sĩ"){
+
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể bảo vệ Tổng Thống."
+color="blue"
+
+}
+
+else if(role==="Kỹ Sư"){
+
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể kiểm tra thiết bị."
+color="blue"
+
+}
+
+else if(role==="Vệ Sĩ"){
+
+team="🔵 ĐỘI XANH"
+desc="Bạn bảo vệ Tổng Thống."
+color="blue"
+
+}
+
+else if(role==="Thám Tử"){
+
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể hỏi một người về đội của họ."
+color="blue"
+
+}
+
+else if(role==="Phóng Viên"){
+
+team="🔵 ĐỘI XANH"
+desc="Bạn có thể công bố thông tin."
+color="blue"
+
+}
+
+else if(role==="Luật Sư"){
+
+team="🔵 ĐỘI XANH"
+desc="Bạn bảo vệ người bị nghi ngờ."
+color="blue"
+
+}
+
+else if(role==="Gián Điệp"){
+
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn giả làm đội xanh để thu thập thông tin."
+color="red"
+
+}
+
+else if(role==="Sát Thủ"){
+
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn có thể loại mục tiêu."
+color="red"
+
+}
+
+else if(role==="Bắn Tỉa"){
+
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn có thể hạ mục tiêu từ xa."
+color="red"
+
+}
+
+else if(role==="Kẻ Lừa Đảo"){
+
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn gây nhiễu thông tin."
+color="red"
+
+}
+
+else if(role==="Kẻ Phá Hoại"){
+
+team="🔴 ĐỘI ĐỎ"
+desc="Bạn phá kế hoạch đội xanh."
+color="red"
+
+}
+
+else if(role==="Con Bạc"){
+
+team="🎲 TRUNG LẬP"
+desc="Bạn thắng nếu đoán đúng đội thắng."
+color="special"
+
+}
+
+else if(role==="Nhà Đàm Phán"){
+
+team="🤝 TRUNG LẬP"
+desc="Bạn có thể trao đổi người giữa hai phòng."
+color="special"
+
+}
+
+else if(role==="Nhà Tiên Tri"){
+
+team="🔮 TRUNG LẬP"
+desc="Bạn nhìn thấy thông tin trước."
+color="special"
+
+}
+
+else if(role==="Bản Sao"){
+
+team="🧬 TRUNG LẬP"
+desc="Bạn sao chép vai trò người khác."
+color="special"
+
 }
 
 else if(role==="Người Câm Xanh"){
+
 team="🤐 ĐỘI XANH"
-desc="Bạn không được nói"
+desc="Bạn không được nói."
 color="blue"
+
 }
 
 else if(role==="Người Câm Đỏ"){
+
 team="🤐 ĐỘI ĐỎ"
-desc="Bạn không được nói"
+desc="Bạn không được nói."
 color="red"
+
 }
 
-back.className="cardFace cardBack "+color
+card.className="card "+color
 
 document.getElementById("team").innerText=team
 document.getElementById("role").innerText=role
 document.getElementById("desc").innerText=desc
-
-setTimeout(()=>{
-card.classList.add("flip")
-},500)
 
 })
 
