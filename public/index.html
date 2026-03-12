@@ -1,124 +1,90 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Two Rooms</title>
 
 <style>
 
 body{
-font-family:Arial;
-background:#020617;
+margin:0;
+background:#0b0f2a;
 color:white;
+font-family:Arial;
 text-align:center;
-padding:20px;
 }
 
 .container{
-max-width:420px;
-margin:auto;
+padding:30px;
 }
 
-.joinCard{
-background:#1e293b;
-padding:25px;
-border-radius:15px;
+.title{
+font-size:32px;
+font-weight:bold;
+margin-top:20px;
 }
 
 input{
-padding:12px;
-font-size:16px;
-border-radius:8px;
-border:none;
 width:80%;
-margin-top:10px;
+padding:15px;
+font-size:18px;
+border-radius:12px;
+border:none;
+margin-top:20px;
 }
 
 button{
-padding:14px 24px;
-font-size:18px;
+margin-top:20px;
+padding:15px 40px;
+font-size:20px;
 border:none;
-border-radius:10px;
-margin-top:15px;
-cursor:pointer;
-background:#3b82f6;
+border-radius:15px;
+background:#00c3ff;
 color:white;
+cursor:pointer;
 transition:0.2s;
 }
 
-button:hover{
-transform:scale(1.08);
-background:#2563eb;
+button:active{
+transform:scale(0.95);
 }
 
-.joinAnim{
-animation:joinEffect 0.4s;
-background:#22c55e !important;
-}
+.roleCard{
 
-@keyframes joinEffect{
-0%{transform:scale(1)}
-50%{transform:scale(1.3)}
-100%{transform:scale(1)}
-}
-
-.lobby{
-display:none;
-margin-top:25px;
-background:#1e293b;
-padding:20px;
-border-radius:15px;
-}
-
-.player{
-background:#0f172a;
-padding:10px;
-margin:5px;
-border-radius:8px;
-}
-
-.card{
-display:none;
-margin-top:30px;
+margin-top:40px;
 padding:30px;
-border-radius:20px;
-box-shadow:0 15px 40px rgba(0,0,0,0.6);
-animation:fade 0.5s;
+border-radius:25px;
+
+background:linear-gradient(145deg,#121a44,#1e2a70);
+
+box-shadow:
+0 0 25px rgba(0,0,0,0.5);
+
 }
 
-@keyframes fade{
-from{opacity:0;transform:scale(0.9)}
-to{opacity:1;transform:scale(1)}
+.roleCard img{
+width:180px;
+margin-top:20px;
 }
 
-.blue{
-background:linear-gradient(135deg,#1d4ed8,#38bdf8);
-}
-
-.red{
-background:linear-gradient(135deg,#991b1b,#ef4444);
-}
-
-.special{
-background:linear-gradient(135deg,#92400e,#facc15);
-}
-
-.team{
-font-size:26px;
+.roleName{
+font-size:34px;
 font-weight:bold;
-}
-
-.role{
-font-size:28px;
 margin-top:10px;
 }
 
-.desc{
+.roleDesc{
 margin-top:15px;
-font-size:16px;
+font-size:18px;
+opacity:0.9;
+}
+
+.waiting{
+font-size:20px;
+margin-top:40px;
 }
 
 </style>
@@ -129,37 +95,19 @@ font-size:16px;
 
 <div class="container">
 
-<div id="joinCard" class="joinCard">
+<div class="title">Two Rooms</div>
 
-<h2>🎮 Two Rooms</h2>
+<div id="join">
 
-<p>Nhập tên của bạn</p>
-
-<input id="name" placeholder="Tên người chơi">
+<input id="name" placeholder="Nhập tên của bạn">
 
 <br>
 
-<button id="joinBtn" onclick="join()">Tham gia</button>
+<button onclick="join()">Tham Gia</button>
 
 </div>
 
-<div id="lobby" class="lobby">
-
-<h3>👥 Lobby</h3>
-
-<p>Đang chờ host bắt đầu...</p>
-
-<div id="players"></div>
-
-</div>
-
-<div id="roleCard" class="card">
-
-<div class="team" id="team"></div>
-<div class="role" id="role"></div>
-<div class="desc" id="desc"></div>
-
-</div>
+<div id="game"></div>
 
 </div>
 
@@ -171,234 +119,65 @@ const socket = io()
 
 function join(){
 
-const name=document.getElementById("name").value
+let name = document.getElementById("name").value
 
-if(name.trim()==""){
-alert("Nhập tên trước")
+if(name===""){
+alert("Nhập tên trước!")
 return
 }
 
-const btn=document.getElementById("joinBtn")
-
-btn.classList.add("joinAnim")
-btn.innerText="Đang tham gia..."
-
 socket.emit("join",name)
 
-document.getElementById("joinCard").style.display="none"
-document.getElementById("lobby").style.display="block"
+document.getElementById("join").innerHTML=""
+
+document.getElementById("game").innerHTML=
+`<div class="waiting">Đang chờ host bắt đầu game...</div>`
 
 }
 
-socket.on("players",(players)=>{
+const descriptions = {
 
-const div=document.getElementById("players")
-
-div.innerHTML=""
-
-players.forEach(p=>{
-
-const d=document.createElement("div")
-
-d.className="player"
-d.innerText=p.name
-
-div.appendChild(d)
-
-})
-
-})
-
-socket.on("role",(role)=>{
-
-document.getElementById("lobby").style.display="none"
-
-const card=document.getElementById("roleCard")
-
-card.style.display="block"
-
-let team=""
-let desc=""
-let color=""
-
-if(role==="Đội Xanh"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn là dân thường đội xanh."
-color="blue"
+tongthong:"Bạn là mục tiêu của Bomber. Hãy sống sót.",
+boom:"Chạm vào Tổng Thống để đội Đỏ thắng.",
+bacsi:"Bạn có thể bảo vệ người chơi quan trọng.",
+vesi:"Bảo vệ Tổng Thống khỏi Bomber.",
+thamtu:"Điều tra người chơi khác.",
+phongvien:"Công bố thông tin để giúp đội mình.",
+luatsu:"Bảo vệ người bị nghi ngờ.",
+kysu:"Kiểm tra thiết bị và bom.",
+giandiep:"Giả làm đội Xanh.",
+satthu:"Loại bỏ mục tiêu.",
+bantia:"Tấn công từ xa.",
+keluadao:"Gây nhiễu thông tin.",
+kephahoai:"Phá kế hoạch đội Xanh.",
+nhatientri:"Biết trước thông tin.",
+bansao:"Sao chép vai trò người khác.",
+conbac:"Thắng nếu đoán đúng đội thắng.",
+nguoicam:"Bạn không được nói.",
+doido:"Thành viên đội Đỏ.",
+doixanh:"Thành viên đội Xanh."
 
 }
 
-else if(role==="Đội Đỏ"){
+socket.on("yourRole",(role)=>{
 
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn là dân thường đội đỏ."
-color="red"
+document.getElementById("game").innerHTML=`
 
-}
+<div class="roleCard">
 
-else if(role==="Tổng Thống"){
+<div class="roleName">${role.toUpperCase()}</div>
 
-team="👑 ĐỘI XANH"
-desc="Nếu Bomber chạm bạn thì đội đỏ thắng."
-color="special"
+<img src="/images/${role}.png">
 
-}
+<div class="roleDesc">${descriptions[role] || ""}</div>
 
-else if(role==="Kẻ Đặt Bom"){
+</div>
 
-team="💣 ĐỘI ĐỎ"
-desc="Chạm Tổng Thống để giúp đội đỏ thắng."
-color="special"
-
-}
-
-else if(role==="Bác Sĩ"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể bảo vệ Tổng Thống."
-color="blue"
-
-}
-
-else if(role==="Kỹ Sư"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể kiểm tra thiết bị."
-color="blue"
-
-}
-
-else if(role==="Vệ Sĩ"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn bảo vệ Tổng Thống."
-color="blue"
-
-}
-
-else if(role==="Thám Tử"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể hỏi một người về đội của họ."
-color="blue"
-
-}
-
-else if(role==="Phóng Viên"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn có thể công bố thông tin."
-color="blue"
-
-}
-
-else if(role==="Luật Sư"){
-
-team="🔵 ĐỘI XANH"
-desc="Bạn bảo vệ người bị nghi ngờ."
-color="blue"
-
-}
-
-else if(role==="Gián Điệp"){
-
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn giả làm đội xanh để thu thập thông tin."
-color="red"
-
-}
-
-else if(role==="Sát Thủ"){
-
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn có thể loại mục tiêu."
-color="red"
-
-}
-
-else if(role==="Bắn Tỉa"){
-
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn có thể hạ mục tiêu từ xa."
-color="red"
-
-}
-
-else if(role==="Kẻ Lừa Đảo"){
-
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn gây nhiễu thông tin."
-color="red"
-
-}
-
-else if(role==="Kẻ Phá Hoại"){
-
-team="🔴 ĐỘI ĐỎ"
-desc="Bạn phá kế hoạch đội xanh."
-color="red"
-
-}
-
-else if(role==="Con Bạc"){
-
-team="🎲 TRUNG LẬP"
-desc="Bạn thắng nếu đoán đúng đội thắng."
-color="special"
-
-}
-
-else if(role==="Nhà Đàm Phán"){
-
-team="🤝 TRUNG LẬP"
-desc="Bạn có thể trao đổi người giữa hai phòng."
-color="special"
-
-}
-
-else if(role==="Nhà Tiên Tri"){
-
-team="🔮 TRUNG LẬP"
-desc="Bạn nhìn thấy thông tin trước."
-color="special"
-
-}
-
-else if(role==="Bản Sao"){
-
-team="🧬 TRUNG LẬP"
-desc="Bạn sao chép vai trò người khác."
-color="special"
-
-}
-
-else if(role==="Người Câm Xanh"){
-
-team="🤐 ĐỘI XANH"
-desc="Bạn không được nói."
-color="blue"
-
-}
-
-else if(role==="Người Câm Đỏ"){
-
-team="🤐 ĐỘI ĐỎ"
-desc="Bạn không được nói."
-color="red"
-
-}
-
-card.className="card "+color
-
-document.getElementById("team").innerText=team
-document.getElementById("role").innerText=role
-document.getElementById("desc").innerText=desc
+`
 
 })
 
 </script>
 
 </body>
-
 </html>

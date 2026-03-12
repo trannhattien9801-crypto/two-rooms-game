@@ -1,88 +1,34 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Host Panel</title>
+<meta charset="UTF-8">
+<title>Host</title>
 
 <style>
 
 body{
-font-family:Arial;
-background:#020617;
+background:#111;
 color:white;
+font-family:Arial;
 text-align:center;
-padding:20px;
-}
-
-.panel{
-background:#1e293b;
-padding:25px;
-border-radius:15px;
-max-width:500px;
-margin:auto;
-}
-
-.player{
-background:#0f172a;
-padding:10px;
-margin:5px;
-border-radius:8px;
-}
-
-.roleBox{
-background:#111827;
-padding:12px;
-margin:8px;
-border-radius:8px;
 }
 
 button{
-
-padding:14px 25px;
-font-size:18px;
+padding:15px 30px;
+font-size:20px;
 border:none;
 border-radius:10px;
-margin:10px;
+background:red;
+color:white;
 cursor:pointer;
-transition:0.2s;
-
 }
 
-.start{
-background:#22c55e;
-}
-
-.reset{
-background:#ef4444;
-}
-
-button:hover{
-transform:scale(1.1);
-}
-
-.startAnim{
-animation:startEffect 0.5s;
-}
-
-@keyframes startEffect{
-
-0%{transform:scale(1)}
-50%{transform:scale(1.3)}
-100%{transform:scale(1)}
-
-}
-
-input{
-
+.player{
+background:#222;
+margin:10px;
 padding:10px;
-font-size:16px;
-border-radius:8px;
-border:none;
-width:150px;
-
+border-radius:10px;
 }
 
 </style>
@@ -91,29 +37,13 @@ width:150px;
 
 <body>
 
-<h1>🎮 Host Control Panel</h1>
+<h1>Host</h1>
 
-<div class="panel">
+<button onclick="start()">Bắt đầu</button>
 
-<h3>👥 Người chơi</h3>
+<h2>Người chơi</h2>
 
 <div id="players"></div>
-
-<br>
-
-<input id="playerCount" type="number" placeholder="Số người chơi">
-
-<br><br>
-
-<button id="startBtn" class="start" onclick="start()">BẮT ĐẦU</button>
-
-<button class="reset" onclick="reset()">RESET</button>
-
-</div>
-
-<br>
-
-<div id="roles"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 
@@ -121,70 +51,23 @@ width:150px;
 
 const socket = io()
 
-socket.on("players",(players)=>{
+socket.on("updatePlayers",(players)=>{
 
-const div=document.getElementById("players")
-
-div.innerHTML=""
+let html=""
 
 players.forEach(p=>{
-
-const d=document.createElement("div")
-
-d.className="player"
-
-d.innerText=p.name
-
-div.appendChild(d)
-
+html+=`<div class="player">${p.name}</div>`
 })
+
+document.getElementById("players").innerHTML=html
 
 })
 
 function start(){
-
-const btn=document.getElementById("startBtn")
-
-btn.classList.add("startAnim")
-
-setTimeout(()=>{
-btn.classList.remove("startAnim")
-},500)
-
-const count=document.getElementById("playerCount").value
-
-socket.emit("startGame",count)
-
-}
-
-socket.on("showRoles",(players)=>{
-
-const div=document.getElementById("roles")
-
-div.innerHTML="<h2>🎭 Vai trò người chơi</h2>"
-
-players.forEach(p=>{
-
-const box=document.createElement("div")
-
-box.className="roleBox"
-
-box.innerHTML="<b>"+p.name+"</b><br>"+p.role
-
-div.appendChild(box)
-
-})
-
-})
-
-function reset(){
-
-location.reload()
-
+socket.emit("startGame")
 }
 
 </script>
 
 </body>
-
 </html>
