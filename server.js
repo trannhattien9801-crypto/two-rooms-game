@@ -12,6 +12,7 @@ let players = []
 
 // danh sách vai trò
 const roles = [
+
 "tongthong",
 "boom",
 "bacsi",
@@ -28,16 +29,17 @@ const roles = [
 "nhatientri",
 "bansao",
 "conbac",
-"nguoicam",
+"camdo",
+"camxanh",
 "doido",
 "doixanh"
+
 ]
 
 io.on("connection",(socket)=>{
 
-console.log("Player connected")
+console.log("player connected")
 
-// người chơi tham gia
 socket.on("join",(name)=>{
 
 players.push({
@@ -50,28 +52,22 @@ io.emit("updatePlayers",players)
 
 })
 
-// host bắt đầu game
 socket.on("startGame",(count)=>{
 
-// trộn vai
 let shuffled=[...roles].sort(()=>Math.random()-0.5)
 
-// chia vai cho người chơi
 players.forEach((p,i)=>{
 
 p.role = shuffled[i] || "doixanh"
 
-// gửi role cho player
 io.to(p.id).emit("yourRole",p.role)
 
 })
 
-// gửi danh sách role cho host
 io.emit("gameStarted",players)
 
 })
 
-// khi người chơi rời
 socket.on("disconnect",()=>{
 
 players = players.filter(p=>p.id !== socket.id)
