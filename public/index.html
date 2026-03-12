@@ -21,70 +21,54 @@ text-align:center;
 padding:30px;
 }
 
-.title{
-font-size:32px;
-font-weight:bold;
-margin-top:20px;
-}
-
 input{
 width:80%;
 padding:15px;
 font-size:18px;
-border-radius:12px;
+border-radius:10px;
 border:none;
-margin-top:20px;
 }
 
 button{
-margin-top:20px;
 padding:15px 40px;
-font-size:20px;
+font-size:18px;
 border:none;
-border-radius:15px;
+border-radius:12px;
 background:#00c3ff;
 color:white;
+margin-top:15px;
 cursor:pointer;
-transition:0.2s;
-}
-
-button:active{
-transform:scale(0.95);
 }
 
 .roleCard{
 
 margin-top:40px;
+
+background:linear-gradient(145deg,#101a45,#1e2a70);
+
 padding:30px;
-border-radius:25px;
 
-background:linear-gradient(145deg,#121a44,#1e2a70);
+border-radius:20px;
 
-box-shadow:
-0 0 25px rgba(0,0,0,0.5);
+box-shadow:0 0 20px rgba(0,0,0,0.5);
 
 }
 
 .roleCard img{
-width:180px;
+width:200px;
 margin-top:20px;
 }
 
 .roleName{
-font-size:34px;
+font-size:32px;
 font-weight:bold;
 margin-top:10px;
 }
 
 .roleDesc{
-margin-top:15px;
+margin-top:10px;
 font-size:18px;
 opacity:0.9;
-}
-
-.waiting{
-font-size:20px;
-margin-top:40px;
 }
 
 </style>
@@ -95,13 +79,13 @@ margin-top:40px;
 
 <div class="container">
 
-<div class="title">Two Rooms</div>
+<h1>Two Rooms</h1>
 
 <div id="join">
 
 <input id="name" placeholder="Nhập tên của bạn">
 
-<br>
+<br><br>
 
 <button onclick="join()">Tham Gia</button>
 
@@ -128,34 +112,31 @@ return
 
 socket.emit("join",name)
 
-document.getElementById("join").innerHTML=""
-
-document.getElementById("game").innerHTML=
-`<div class="waiting">Đang chờ host bắt đầu game...</div>`
+document.getElementById("join").innerHTML="Đang chờ host bắt đầu..."
 
 }
 
-const descriptions = {
+const descriptions={
 
-tongthong:"Bạn là mục tiêu của Bomber. Hãy sống sót.",
+tongthong:"Bạn là mục tiêu của Bomber.",
 boom:"Chạm vào Tổng Thống để đội Đỏ thắng.",
 bacsi:"Bạn có thể bảo vệ người chơi quan trọng.",
 vesi:"Bảo vệ Tổng Thống khỏi Bomber.",
 thamtu:"Điều tra người chơi khác.",
-phongvien:"Công bố thông tin để giúp đội mình.",
-luatsu:"Bảo vệ người bị nghi ngờ.",
+phongvien:"Công bố thông tin cho đội mình.",
+luatsu:"Bảo vệ người chơi bị nghi ngờ.",
 kysu:"Kiểm tra thiết bị và bom.",
-giandiep:"Giả làm đội Xanh.",
-satthu:"Loại bỏ mục tiêu.",
+giandiep:"Giả làm đội Xanh để thu thập thông tin.",
+satthu:"Có thể loại bỏ mục tiêu.",
 bantia:"Tấn công từ xa.",
 keluadao:"Gây nhiễu thông tin.",
 kephahoai:"Phá kế hoạch đội Xanh.",
-nhatientri:"Biết trước thông tin.",
+nhatientri:"Biết trước thông tin người chơi.",
 bansao:"Sao chép vai trò người khác.",
 conbac:"Thắng nếu đoán đúng đội thắng.",
 nguoicam:"Bạn không được nói.",
-doido:"Thành viên đội Đỏ.",
-doixanh:"Thành viên đội Xanh."
+doido:"Bạn thuộc đội Đỏ.",
+doixanh:"Bạn thuộc đội Xanh."
 
 }
 
