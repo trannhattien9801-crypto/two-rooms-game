@@ -10,11 +10,36 @@ app.use(express.static("public"))
 
 let players = []
 
-// danh sách vai trò
-const roles = [
+io.on("connection",(socket)=>{
 
+console.log("Player connected")
+
+// người chơi tham gia
+socket.on("join",(name)=>{
+
+players.push({
+id:socket.id,
+name:name,
+role:null
+})
+
+io.emit("updatePlayers",players)
+
+})
+
+
+// host bắt đầu game
+socket.on("startGame",(count)=>{
+
+// 2 vai bắt buộc
+let gameRoles = [
 "tongthong",
-"boom",
+"boom"
+]
+
+// các vai khác
+let extraRoles = [
+
 "bacsi",
 "vesi",
 "thamtu",
@@ -30,44 +55,50 @@ const roles = [
 "bansao",
 "conbac",
 "camdo",
-"camxanh",
-"doido",
-"doixanh"
+"camxanh"
 
 ]
 
-io.on("connection",(socket)=>{
+// trộn vai phụ
+extraRoles = extraRoles.sort(()=>Math.random()-0.5)
 
-console.log("player connected")
+// thêm vai phụ theo số người
+for(let i=0;i<players.length-2;i++){
 
-socket.on("join",(name)=>{
+gameRoles.push(extraRoles[i] || "doixanh")
 
-players.push({
-id:socket.id,
-name:name,
-role:null
-})
+}
 
-io.emit("updatePlayers",players)
+// nếu vẫn thiếu thì thêm dân thường
+while(gameRoles.length < players.length){
 
-})
+if(Math.random()>0.5){
+gameRoles.push("doixanh")
+}else{
+gameRoles.push("doido")
+}
 
-socket.on("startGame",(count)=>{
+}
 
-let shuffled=[...roles].sort(()=>Math.random()-0.5)
+// trộn lại toàn bộ role
+gameRoles = gameRoles.sort(()=>Math.random()-0.5)
 
+// chia role
 players.forEach((p,i)=>{
 
-p.role = shuffled[i] || "doixanh"
+p.role = gameRoles[i]
 
 io.to(p.id).emit("yourRole",p.role)
 
 })
 
+// gửi role cho host
 io.emit("gameStarted",players)
 
 })
 
+
+// người chơi rời game
 socket.on("disconnect",()=>{
 
 players = players.filter(p=>p.id !== socket.id)
