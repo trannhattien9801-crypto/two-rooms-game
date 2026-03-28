@@ -122,7 +122,7 @@ boom:"Bomber(Phe Đỏ)",
 bacsi:"Bác Sĩ(Phe Xanh)",
 vesi:"Vệ Sĩ(Phe Xanh)",
 thamtu:"Thám Tử(Phe Xanh)",
-phongvien:"Phóng Viên(Phe Xanh)",
+phongvien:"Phóng Viên(Phe Trung Lập)",
 luatsu:"Luật Sư(Phe Xanh)",
 kysu:"Kỹ Sư(Phe Xanh)",
 giandiep:"Gián Điệp(Phe Đỏ)",
@@ -147,7 +147,7 @@ boom:"Chung phòng với Tổng Thống để đội Đỏ thắng.",
 bacsi:"Bạn có thể bảo vệ người chơi.",
 vesi:"Bảo vệ Tổng Thống,nếu bạn chung phòng với Tổng Thống khi Bom nổ thì bom sẽ không nổ.",
 thamtu:"Điều tra người chơi khác, bạn biết được họ là đội nào.",
-phongvien:"Công bố thông tin,bạn có thể công bố thông tin của một người chơi bất kỳ.",
+phongvien:"Công bố thông tin,bạn có thể công bố thông tin từ quản trò đưa ra.",
 luatsu:"Bảo vệ người bị nghi,bạn có thể bảo vệ một người chơi bị nghi ngờ.",
 kysu:"Kiểm tra thiết bị, bạn có thể kiểm tra xem một người chơi có thiết bị nổ hay không.",
 giandiep:"Giả làm đội Xanh để thu thập thông tin,bạn thắng khi đội đỏ thắng.",
@@ -161,11 +161,30 @@ conbac:"Đoán đội thắng, bạn có thể đoán đội nào sẽ thắng, 
 camdo:"Bạn thuộc đội Đỏ và không được nói.",
 camxanh:"Bạn thuộc đội Xanh và không được nói.",
 doido:"Bạn thuộc đội Đỏ.",
-doixanh:"Bạn thuộc đội Xanh."
+doixanh:"Bạn thuộc đội Xanh.",
+thietbino:"Bạn có thiết bị nổ, nếu chung phòng với Bom tịt thì bạn sẽ nổ cùng Bom tịt.",
 
 }
 
-socket.on("yourRole",(role)=>{
+socket.on("yourRole",(data)=>{
+
+const role = data.role
+const item = data.item
+
+let itemHTML = ""
+
+if(item==="thietbino"){
+itemHTML = `
+<br>
+<img src="/images/thietbino.png" width="80">
+<br>
+<b>💣 Thiết bị nổ</b>
+`
+}
+
+if(item==="thietbino"){
+itemText = "<br><b>💣 Bạn có THIẾT BỊ NỔ</b>"
+}
 
 document.getElementById("game").innerHTML=`
 
@@ -175,7 +194,10 @@ document.getElementById("game").innerHTML=`
 
 <img src="/images/${role}.png">
 
-<div class="roleDesc">${descriptions[role]}</div>
+<div class="roleDesc">
+${descriptions[role]}
+${itemHTML}
+</div>
 
 </div>
 

@@ -12,15 +12,13 @@ let players = []
 
 io.on("connection",(socket)=>{
 
-console.log("Player connected")
-
-// người chơi tham gia
 socket.on("join",(name)=>{
 
 players.push({
 id:socket.id,
 name:name,
-role:null
+role:null,
+item:null
 })
 
 io.emit("updatePlayers",players)
@@ -28,17 +26,19 @@ io.emit("updatePlayers",players)
 })
 
 
-// host bắt đầu game
-socket.on("startGame",(count)=>{
+// START GAME
+socket.on("startGame",()=>{
 
-// 2 vai bắt buộc
+// vai bắt buộc
 let gameRoles = [
 "tongthong",
 "boom"
 ]
 
-// các vai khác
+// vai phụ
 let extraRoles = [
+
+"bomtit",
 
 "bacsi",
 "vesi",
@@ -59,17 +59,15 @@ let extraRoles = [
 
 ]
 
-// trộn vai phụ
+// trộn
 extraRoles = extraRoles.sort(()=>Math.random()-0.5)
 
-// thêm vai phụ theo số người
+// thêm role
 for(let i=0;i<players.length-2;i++){
-
 gameRoles.push(extraRoles[i] || "doixanh")
-
 }
 
-// nếu vẫn thiếu thì thêm dân thường
+// thêm dân thường nếu thiếu
 while(gameRoles.length < players.length){
 
 if(Math.random()>0.5){
@@ -80,25 +78,60 @@ gameRoles.push("doido")
 
 }
 
-// trộn lại toàn bộ role
+// trộn role
 gameRoles = gameRoles.sort(()=>Math.random()-0.5)
 
-// chia role
+// gán role
 players.forEach((p,i)=>{
-
 p.role = gameRoles[i]
+p.item = null
+})
 
-io.to(p.id).emit("yourRole",p.role)
+// =======================
+// 🎒 ITEM THIẾT BỊ NỔ
+// =======================
+
+// xác định phe đỏ
+const redRoles = [
+"boom",
+"giandiep",
+"satthu",
+"bantia",
+"keluadao",
+"kephahoai",
+"camdo",
+"doido"
+]
+
+let redPlayers = players.filter(p => redRoles.includes(p.role))
+
+// trộn
+redPlayers = redPlayers.sort(()=>Math.random()-0.5)
+
+// gán tối đa 3 thiết bị nổ
+for(let i=0;i<3 && i<redPlayers.length;i++){
+redPlayers[i].item = "thietbino"
+}
+
+// =======================
+
+// gửi role + item
+players.forEach(p=>{
+
+io.to(p.id).emit("yourRole",{
+role:p.role,
+item:p.item
+})
 
 })
 
-// gửi role cho host
+// gửi cho host
 io.emit("gameStarted",players)
 
 })
 
 
-// người chơi rời game
+// disconnect
 socket.on("disconnect",()=>{
 
 players = players.filter(p=>p.id !== socket.id)
@@ -110,5 +143,5 @@ io.emit("updatePlayers",players)
 })
 
 server.listen(3000,()=>{
-console.log("Server running on port 3000")
+console.log("Server running")
 })
