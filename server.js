@@ -93,10 +93,10 @@ p.item = null
 
 // xác định phe đỏ
 const redRoles = [
-"boom",
+
 "giandiep",
 "satthu",
-"bantia",
+
 "keluadao",
 "kephahoai",
 "camdo",
